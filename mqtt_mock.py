@@ -22,7 +22,7 @@ client.loop_start()
 
 while True:
 
-    client.publish("/car_1", "LAT:0.0,LNG:0.0,T:25.6,S:100,H:50.6,ST:T,X:100,Y:400,Z:200")
+    # client.publish("/device_1", "LAT:0.0,LNG:0.0,T:25.6,S:100,H:50.6,ST:T,X:100,Y:400,Z:200")
     # client.publish("/car_2", json.dumps({'temp': 25.6, 'speed': 100, 'status': '', 
     #                           'humidity': 50.6, 'lat':0.0, 'lng':0.0}))
     client.publish("/car_2/status", "connected")

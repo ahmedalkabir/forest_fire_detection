@@ -24,7 +24,7 @@ def index():
                  {'location':'32.901467821069986, 13.229698875281889',}, 
                  {'location':'32.901467821069986, 13.229698875281889',}, 
                  {'location':'32.901467821069986, 13.229698875281889',}]
-    return render_template("index.html", title='Home', devices_v=len(devices), devices=devices, histories=histories_1)
+    return render_template("index.html", title='Home', devices_v=len(devices) * 10, devices=devices, histories=histories_1)
 
 @app.route("/login", methods=['GET', 'POSt'])
 def login():
