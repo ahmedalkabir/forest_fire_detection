@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8" />
+    <title>Login | IoT Fleet Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="assets/images/favicon.ico">
+
+    <!-- Bootstrap Css -->
+    <link href="{{ url_for('static', filename='assets/css/bootstrap.min.css') }} " id="bootstrap-style" rel="stylesheet"
+        type="text/css" />
+    <!-- Icons Css -->
+    <link href="{{ url_for('static', filename='assets/css/icons.min.css') }} " rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="{{ url_for('static', filename='assets/css/app.min.css') }} " id="app-style" rel="stylesheet"
+        type="text/css" />
+
+</head>
+
+<body class="auth-body-bg">
+    <div class="bg-overlay"></div>
+    <div class="wrapper-page">
+        <div class="container-fluid p-0">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="text-center mt-4">
+                        <div class="mb-3">
+                            <a href="index.html" class="auth-logo">
+                                <!-- <img src="assets/images/logo-dark.png" height="30" class="logo-dark mx-auto" alt=""> -->
+                                <img src="{{ url_for('static', filename='assets/images/logo.png') }}" height="100"
+                                    class="logo-dark mx-auto" alt="">
+                            </a>
+                        </div>
+                    </div>
+
+                    <h4 class="text-muted text-center font-size-18"><b>Sign In</b></h4>
+
+                    <div class="p-3">
+                        {% for error in form.username.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        <div class="">
+                            {% with messages = get_flashed_messages() %}
+                                {% if messages %}
+                                    {% for message in messages %}
+    
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+    
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                        <form class="form-horizontal mt-3" action="" method="POST">
+                            {{ form.hidden_tag() }}
+
+                            <div class="form-group mb-3 row">
+                                <div class="col-12">
+                                    {{ form.username(size=32,class="form-control", placeholder="User name") }}
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3 row">
+                                <div class="col-12">
+                                    {{ form.password(size=32,class="form-control", placeholder="Password") }}
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3 row">
+                                <div class="col-12">
+                                    <div class="custom-control custom-checkbox">
+                                        <!-- <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                        <label class="form-label ms-1" for="customCheck1">Remember me</label> -->
+                                        {{ form.remember_me(class="custom-control-input") }} {{ form.remember_me.label(class="form-label ms-1") }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3 text-center row mt-3 pt-1">
+                                <div class="col-12">
+                                    {{ form.submit(class="btn btn-info w-100 waves-effect waves-light") }}
+                                </div>
+                            </div>
+                    </div>
+                    </form>
+                </div>
+                <!-- end -->
+            </div>
+            <!-- end cardbody -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end container -->
+    </div>
+    <!-- end -->
+
+    <!-- JAVASCRIPT -->
+    <script src="{{ url_for('static', filename='assets/libs/jquery/jquery.min.js') }} "></script>
+    <script src="{{ url_for('static', filename='assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/libs/metismenu/metisMenu.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/libs/simplebar/simplebar.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/libs/node-waves/waves.min.js') }}"></script>
+
+    <!-- App js -->
+    <script src="{{ url_for('static', filename='assets/js/app.js') }} "></script>
+
+</body>
+
+</html>

@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Dashboard</h4>
+
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <div class="row">
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <p class="text-truncate font-size-14 mb-2">Status</p>
+                                <h4 id="car_status" class="mb-2"></h4>
+                            </div>
+                            <div class="avatar-sm">
+                                <span class="avatar-title bg-light text-primary rounded-3">
+                                    <i class="ri-router-fill font-size-24"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div><!-- end cardbody -->
+                </div><!-- end card -->
+            </div><!-- end col -->
+
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <p class="text-truncate font-size-14 mb-2">Temperature</p>
+                                <h4 id="temperature_value" class="mb-2"></h4>
+                            </div>
+                            <div class="avatar-sm">
+                                <span class="avatar-title bg-light text-primary rounded-3">
+                                    <i class="fas fa-thermometer-half font-size-24"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div><!-- end cardbody -->
+                </div><!-- end card -->
+            </div><!-- end col -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <p class="text-truncate font-size-14 mb-2">Humidity</p>
+                                <h4 id="humidity_value" class="mb-2"></h4>
+                            </div>
+                            <div class="avatar-sm">
+                                <span class="avatar-title bg-light text-primary rounded-3">
+                                    <i class="fas fa-water font-size-24"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div><!-- end cardbody -->
+                </div><!-- end card -->
+            </div><!-- end col -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <p class="text-truncate font-size-14 mb-2">Gas Sensor</p>
+                                <h4 id="speed_value" class="mb-2"></h4>
+                            </div>
+                            <div class="avatar-sm">
+                                <span class="avatar-title bg-light text-primary rounded-3">
+                                    <i class="fas fa-tachometer-alt font-size-24"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div><!-- end cardbody -->
+                </div><!-- end card -->
+            </div><!-- end col -->
+        </div><!-- end row -->
+
+
+
+        <div class="row">
+            <div class="card">
+                <div class="card-body pb0">
+                    <h4 class="card-title mb-4">{{ device.name }} - Map</h4>
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Temp and Humidity Chart</h4>
+
+                        <div id="data_chart" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Gas Chart</h4>
+
+                        <div id="gyro_chart" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+        <!-- end row -->
+
+
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    <div class="dropdown float-end">
+                        <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="mdi mdi-dots-vertical"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <!-- item-->
+                            <a href="javascript:void(0);" class="dropdown-item">Sales Report</a>
+                            <!-- item-->
+                            <a href="javascript:void(0);" class="dropdown-item">Export Report</a>
+                            <!-- item-->
+                            <a href="javascript:void(0);" class="dropdown-item">Profit</a>
+                            <!-- item-->
+                            <a href="javascript:void(0);" class="dropdown-item">Action</a>
+                        </div>
+                    </div>
+
+                    <h4 class="card-title mb-4">History</h4>
+
+                    <div class="table-responsive">
+                        <table class="table table-centered mb-0 align-middle table-hover table-nowrap">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Device</th>
+                                    <th>Name</th>
+                                    <th>Location</th>
+                                    <th>Speed</th>
+                                    <th>Temperature</th>
+                                    <th>Humidity</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead><!-- end thead -->
+                            <tbody>
+                                {% if histories %}
+                                {% for history in histories %}
+                                <tr>
+                                    <td>
+                                        <h6 class="mb-0">car_1</h6>
+                                    </td>
+                                    <td>{{ device.name }}</td>
+                                    <td>Latitude: {{ history.lat }}, Langtitude: {{ history.lng }}</td>
+                                    <td>
+                                        {{ history.speed }}
+                                    </td>
+                                    <td>
+                                        {{ history.temperature }}
+                                    </td>
+                                    <td>
+                                        {{ history.humidity }}
+                                    </td>
+                                    <td>
+                                        {{ history.timestamp }}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                                <!-- end -->
+                                <!-- end -->
+                            </tbody><!-- end tbody -->
+                        </table> <!-- end table -->
+                    </div>
+                </div><!-- end card -->
+            </div><!-- end card -->
+
+        </div>
+        <!-- end row -->
+    </div>
+
+</div>
+{% endblock %}
+
+{% block websocket %}
+<!-- apexcharts -->
+<script src="{{ url_for('static', filename='assets/libs/apexcharts/apexcharts.min.js') }}"></script>
+<script>
+    // apex chart
+    var apex_options = {
+        chart: {
+            height: 350,
+            type: "area"
+        },
+        dataLabels: {
+            enabled: !1
+        },
+        stroke: {
+            curve: "smooth",
+            width: 3
+        },
+        series: [],
+        colors: ["#0f9cf3", "#1cbb8c"],
+        xaxis: {
+            type: "datetime",
+            // range: XAXISRANGE,
+            // categories: ["2018-09-19T00:00:00", "2018-09-19T01:30:00", "2018-09-19T02:30:00", "2018-09-19T03:30:00", "2018-09-19T04:30:00", "2018-09-19T05:30:00", "2018-09-19T06:30:00"]
+        },
+        grid: {
+            borderColor: "#f1f1f1",
+            padding: {
+                bottom: 15
+            }
+        },
+        tooltip: {
+            x: {
+                format: "dd/MM/yy HH:mm"
+            }
+        },
+        legend: {
+            offsetY: 7
+        }
+    };
+
+    var speed_t_h_chart = new ApexCharts(document.querySelector("#data_chart"), apex_options);
+    speed_t_h_chart.render();
+
+    var gyro_chart = new ApexCharts(document.querySelector("#gyro_chart"), apex_options);
+    gyro_chart.render();
+
+    var map = L.map('map').setView([32.782937, 12.56658], 8);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+    var marker = L.marker([32.901467821069986, 13.229698875281889]).addTo(map);
+    marker.bindPopup("<b>Car 1</b><br>Status On")
+
+    function update_widgets(status, temperature, humidity, speed) {
+
+        let status_el = document.getElementById('car_status');
+        let temperature_el = document.getElementById('temperature_value');
+        let humidity_el = document.getElementById('humidity_value');
+        let speed_el = document.getElementById('speed_value');
+
+        status_el.innerHTML = status
+        temperature_el.innerHTML = temperature
+        humidity_el.innerHTML = humidity
+        speed_el.innerHTML = speed
+    }
+
+    function update_map(marker, lat, lng) {
+        var newLatLng = new L.LatLng(lat, lng);
+        marker.setLatLng(newLatLng)
+    }
+    const socket = new WebSocket('ws://' + location.host + '/device')
+    // socket.send('Hello')
+    socket.onopen = (event) => {
+        console.log(event);
+        socket.send(JSON.stringify({ device: '{{ device.code_name }}', }))
+    }
+    
+    var object = {}
+    socket.onmessage = (event) => {
+        console.log(event)
+        object = JSON.parse(event.data)
+        // console.log(object)
+
+        update_widgets(object.ST, object.T, object.H, object.S)
+        update_map(marker, object.LAT, object.LNG)
+    }
+
+
+    addEventListener("beforeunload", (event) => {
+        socket.send('CLOSE');
+    });
+
+
+
+
+</script>
+{% endblock %}
