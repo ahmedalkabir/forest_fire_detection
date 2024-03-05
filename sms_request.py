@@ -6,4 +6,3 @@ def send_sms_message(phone: str, message: str):
                             json={'phone':phone, 'message':message})
     return True if response.status_code == 202 else False
 
-send_sms_message('+218923305946', 'yes it works well......')

@@ -63,7 +63,9 @@ class MQTT:
 
         # self._channels: List[Channel] = []
         self._channels: Dict[Channel] = {}
-
+        self._action_fn = None
+        self._subscribers = []
+        
     def connect(self):
         print('[connect to mqtt broker]')
         self.client.connect(self.host, self.port)
@@ -89,7 +91,9 @@ class MQTT:
 
     def on_connect(self, client: mqtt.Client, userdata, flags, rc):
         # self.client.subscribe('/car_1')
-        pass
+        
+        for sub in self._subscribers:
+            self.subscribe_to(sub)
 
     def on_message(self, client: mqtt.Client, userdata, msg):
         msg_payload = {
@@ -97,6 +101,9 @@ class MQTT:
             'msg': msg.payload
         } 
         self._channels[msg.topic].notify(msg_payload)
+        # self._
+        if self._action_fn:
+            self._action_fn(msg_payload)
 
     def subscribe_to(self, topic, payload_parser=None):
         topic_str = '/' + topic
@@ -111,6 +118,11 @@ class MQTT:
             self._channels[topic_str] = channel
             return channel
 
+    def set_subscribers(self, things):
+        self._subscribers = things
+
+    def set_action_cb(self, fn):
+        self._action_fn = fn
 
 
         

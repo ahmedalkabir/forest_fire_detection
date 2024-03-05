@@ -55,7 +55,7 @@ class Thing(db.Model):
     )
 
     def __repr__(self) -> str:
-        return '<User {}>'.format(self.code_name)
+        return '<Thing {}>'.format(self.code_name)
 
 class History(db.Model):
     
