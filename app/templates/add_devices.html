@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Dashboard</h4>
+
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <div class="row">
+            <div class="">
+                {% with messages = get_flashed_messages('success') %}
+                    {% if messages %}
+                        {% for message in messages %}
+
+                        {% if message[0] == 'info' %}
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            {{ message[1] }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+
+                        {% if message[0] == 'success' %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ message[1] }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+
+                        {% if message[0] == 'warning' %}
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            {{ message[1] }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Add Device To The Dashboard</h4>
+                    <form action="" method="POST">
+                        <div class="row mb-3">
+                            <label for="example-text-input" class="col-sm-2 col-form-label">CODE NAME</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" placeholder="iot_1" id="code_name" name="code_name" >
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="example-text-input" class="col-sm-2 col-form-label">Name</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" placeholder="Fire Forest Detector "
+                                    id="name" name="name" >
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="example-text-input" class="col-sm-2 col-form-label">Description</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" placeholder="description"
+                                    id="description" name="description">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="example-text-input" class="col-sm-2 col-form-label">Forest Location</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" placeholder="Forest's Location"
+                                    id="forest_location" name="forest_location">
+                            </div>
+                        </div>
+                        <!-- end row -->
+                        <div>
+                            <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Add Device">
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+
+    </div>
+
+</div>
+{% endblock %}

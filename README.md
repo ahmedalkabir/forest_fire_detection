@@ -1,2 +1,2 @@
-# iot_fleet_tracker
-IoT Fleet Tracker
+# forest_fire_detector
+Forest Fire Detector

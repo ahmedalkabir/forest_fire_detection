@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Dashboard</h4>
+
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <div class="row">
+            <div class="">
+                {% with messages = get_flashed_messages('success') %}
+                    {% if messages %}
+                        {% for message in messages %}
+
+                        {% if message[0] == 'info' %}
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            {{ message[1] }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+
+                        {% if message[0] == 'success' %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ message[1] }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+
+                        {% if message[0] == 'warning' %}
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            {{ message[1] }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Add Actions</h4>
+                    <form action="" method="POST">
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">Devices</label>
+                            <div class="col-sm-10">
+                                <select class="form-select" aria-label="Select Devices" id="device" name="device">
+                                    <option selected="">Select Devices</option>
+                                    {% if devices %}
+                                        {% for device in devices %}
+                                        <option value="{{ device.code_name }}">{{ device.code_name }} - {{ device.name }}</option>
+                                        {% endfor %}
+                                    {% endif %}
+                                    </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="example-text-input" class="col-sm-2 col-form-label">Name</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" placeholder="Action 1" id="name" name="name" >
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">Type</label>
+                            <div class="col-sm-10">
+                                <select class="form-select" aria-label="" id="type" name="type">
+                                    <option selected="">Select Type</option>
+                                    <option value="sms">SMS</option>
+                                    </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="example-text-input" class="col-sm-2 col-form-label">Destination</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" placeholder="destination: phone number"
+                                    id="destination" name="destination">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">Variable</label>
+                            <div class="col-sm-10">
+                                <select class="form-select" aria-label="Default select example" id="variable" name="variable">
+                                    <option selected="">Select Variable</option>
+                                    <option value="temperature">temperature</option>
+                                    <option value="humidity">humidity</option>
+                                    <option value="gas">gas</option>
+                                    </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">Operation</label>
+                            <div class="col-sm-10">
+                                <select class="form-select" aria-label="Default select example" id="operation" name="operation">
+                                    <option selected="">Select Variable</option>
+                                    <option value=">">></option>
+                                    <option value=">=">>=</option>
+                                    <option value="=">=</option>
+                                    <option value="<"><</option>
+                                    <option value="<="><=</option>
+                                    </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="example-text-input" class="col-sm-2 col-form-label">Value</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" placeholder="Value"
+                                    id="value" name="value">
+                            </div>
+                        </div>
+
+
+                        <!-- end row -->
+                        <div>
+                            <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Add Action">
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+
+    </div>
+
+</div>
+{% endblock %}

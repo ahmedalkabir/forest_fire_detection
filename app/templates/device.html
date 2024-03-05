@@ -100,28 +100,24 @@
         <!-- end row -->
 
         <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Temp and Humidity Chart</h4>
 
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title mb-4">Temp and Humidity Chart</h4>
-
-                        <div id="data_chart" class="apex-charts" dir="ltr"></div>
-                    </div>
-                </div><!--end card-->
-            </div>
-
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title mb-4">Gas Chart</h4>
-
-                        <div id="gyro_chart" class="apex-charts" dir="ltr"></div>
-                    </div>
-                </div><!--end card-->
-            </div>
+                    <div id="data_chart" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div><!--end card-->
         </div>
-        <!-- end row -->
+
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Gas Chart</h4>
+
+                    <div id="gyro_chart" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div><!--end card-->
+        </div> <!-- end row -->
 
 
         <div class="row">
@@ -133,14 +129,7 @@
                             <i class="mdi mdi-dots-vertical"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end">
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Sales Report</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Export Report</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Profit</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Action</a>
+
                         </div>
                     </div>
 
@@ -275,7 +264,7 @@
         console.log(event);
         socket.send(JSON.stringify({ device: '{{ device.code_name }}', }))
     }
-    
+
     var object = {}
     socket.onmessage = (event) => {
         console.log(event)

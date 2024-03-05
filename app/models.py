@@ -46,9 +46,12 @@ class Thing(db.Model):
     code_name: so.Mapped[str] = so.mapped_column(sa.String(140), unique=True)
     name: so.Mapped[str] = so.mapped_column(sa.String(140))
     description: so.Mapped[str] = so.mapped_column(sa.Text())
+    location_name: so.Mapped[str] = so.mapped_column(sa.String(140))
 
     histories: so.WriteOnlyMapped['History'] = so.relationship(
-        back_populates='thing'
+        back_populates='thing',
+        cascade="all, delete",
+        passive_deletes=True,
     )
 
     def __repr__(self) -> str:
@@ -59,7 +62,7 @@ class History(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     lat: so.Mapped[float] = so.mapped_column(sa.Float())
     lng: so.Mapped[float] = so.mapped_column(sa.Float())
-    speed: so.Mapped[float] = so.mapped_column(sa.Float())
+    gas: so.Mapped[float] = so.mapped_column(sa.Float())
     temperature: so.Mapped[float] = so.mapped_column(sa.Float())
     humidity: so.Mapped[float] = so.mapped_column(sa.Float())
     timestamp: so.Mapped[datetime] = so.mapped_column(
@@ -68,6 +71,17 @@ class History(db.Model):
     thing_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Thing.id), index=True)
 
     thing: so.Mapped[Thing] = so.relationship(back_populates='histories')
+
+class Action(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    name: so.Mapped[str] = so.mapped_column(sa.String(140))
+    thing_code: so.Mapped[str] = so.mapped_column(sa.String(140))
+    type: so.Mapped[str] = so.mapped_column(sa.String(140))
+    destination: so.Mapped[str] = so.mapped_column(sa.String(140))
+    field: so.Mapped[str] = so.mapped_column(sa.String(140))
+    operation: so.Mapped[str] = so.mapped_column(sa.String(140))
+
+    value: so.Mapped[float] = so.mapped_column(sa.Float())
 
 
 @login.user_loader

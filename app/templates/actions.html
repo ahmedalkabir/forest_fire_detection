@@ -49,9 +49,10 @@
 
         <div class="row mb-2">
             <div class="col-4">
-                <a class="btn btn-primary waves-effect waves-light" href="/add-device" role="button">Add Device</a>
+                <a class="btn btn-primary waves-effect waves-light" href="/add-action" role="button">Add Action</a>
             </div>
         </div><!-- end row -->
+
 
 
         <div class="row">
@@ -62,37 +63,45 @@
                         <table class="table table-centered mb-0 align-middle table-hover table-nowrap">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Device</th>
-                                    <th>Code Name</th>
+                                    <th>ID</th>
                                     <th>Name</th>
-                                    <th>Discription</th>
-                                    <th>Last Time Seen</th>
-                                    <th></th>
+                                    <th>Type</th>
+                                    <th>Destination</th>
+                                    <th>Field</th>
+                                    <th>Operation</th>
+                                    <th>Value</th>
+                                    <th>  </th>
                                 </tr>
                             </thead><!-- end thead -->
                             <tbody>
                                 <tr>
-                                    {% if devices %}
-                                    {% for device in devices %}
+                                    {% if actions %}
+                                    {% for action in actions %}
                                 <tr>
                                     <td>
-                                        <a href="{{ url_for('device', id=device.id) }}">
-                                            <h6 class="mb-0">{{ device.id }}</h6>
+                                        <a href="">
+                                            <h6 class="mb-0">{{ action.id }}</h6>
                                         </a>
                                     </td>
-                                    <td>{{ device.code_name }}</td>
+                                    <td>{{ action.name }}</td>
                                     <td>
-                                        {{ device.name }}
+                                        {{ action.type }}
                                     </td>
                                     <td>
-                                        {{ device.description }}
+                                        {{ action.destination }}
                                     </td>
                                     <td>
-                                        minute ago
+                                        {{ action.field }}
+                                    </td>
+                                    <td>
+                                        {{ action.operation }}
+                                    </td>
+                                    <td>
+                                        {{ action.value }}
                                     </td>
                                     <td>
                                         <a class="btn btn-danger waves-effect waves-light"
-                                            href="/delete-device/{{device.id}}" role="button">Delete Device</a>
+                                            href="/delete-action/{{action.id}}" role="button">Delete Action</a>
                                     </td>
                                 </tr>
                                 {% endfor %}
