@@ -190,6 +190,8 @@
 {% block websocket %}
 <!-- apexcharts -->
 <script src="{{ url_for('static', filename='assets/libs/apexcharts/apexcharts.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/libs/toastr/build/toastr.min.js') }}"></script>
+
 <script>
     // apex chart
     var apex_options = {
@@ -273,9 +275,15 @@
         object = JSON.parse(event.data)
         console.log(object)
 
-        update_widgets('CONNECTED', object.temp, object.hum, object.gas)
-        update_map(marker, object.lat, object.lng)
+        if(object.topic == 'alert'){
+            xobject = object.msg
+            toastr.error(`Fire of {{ device.name }} at ${xobject.lat},  - , ${xobject.lng}`, 'Alert')
+        } else {
+            update_widgets('CONNECTED', object.temp, object.hum, object.gas)
+            update_map(marker, object.lat, object.lng)
+        }
     }
+
 
 
     addEventListener("beforeunload", (event) => {

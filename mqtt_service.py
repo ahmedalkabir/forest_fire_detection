@@ -11,7 +11,7 @@ from typing import List, Dict
 from threading import Event
 import queue
 from sqlalchemy.orm import sessionmaker
-
+import time
 
 def gt(left, right):
     return left > right
@@ -42,9 +42,9 @@ class MQTTService:
         self._id = id
         self._session_m = sessionmaker(bind=self._engine)
         self._session = self._session_m()
-        
 
-
+        self._last_time: Dict[str] = {}
+    
     def start(self):
         self._conn = self._engine.connect()
         things =  self._conn.execute(sa.Select(Thing)).all()
@@ -98,7 +98,17 @@ class MQTTService:
                 lat = data['lat']
                 lng = data['lng']
                 if comp_fn(in_value, compare_value):
-                    send_sms_message(phone_number, f'ALERT: There is a fire in http://maps.google.com/?ll={lat},{lng}')
+                    # print('sms')
+                    if self._last_time.get(action[2]):
+                        last_time = time.time()
+                        diff = last_time - self._last_time[action[2]]
+                        # send the message per minute
+                        if diff > 60:
+                            self._last_time[action[2]] = time.time()
+                            send_sms_message(phone_number, f'ALERT: There is a fire in http://maps.google.com/?ll={lat},{lng}')
+                    else:
+                        self._last_time[action[2]] = time.time()
+                        send_sms_message(phone_number, f'ALERT: There is a fire in http://maps.google.com/?ll={lat},{lng}')
 
     def save_to_histories(self, message, thing_id):
         # read table 

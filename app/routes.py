@@ -10,7 +10,22 @@ from urllib.parse import urlsplit
 import ast
 import json
 
-testing = 0
+
+def gt(left, right):
+    return left > right
+
+def gte(left, right):
+    return left >= right
+
+def lt(left, right):
+    return left < right
+
+def lte(left, right):
+    return left <= right
+
+operations = {'>':gt, '>=':gte, '<':lt, '<=':lte}
+
+map_fields = {'temperature':'temp', 'hum':'humidity', 'gas':'gas'}
 
 @app.route("/")
 @app.route("/index")
@@ -202,7 +217,7 @@ def history(id):
         "hum": [log.humidity for log in histories_1],
         "gas": [log.gas for log in histories_1],
     }
-    
+
     return jsonify(data)
 
 
@@ -247,7 +262,8 @@ def websocket_devices(sock):
 
 @sock.route('/device')
 def websocket_device(sock):
-    global data
+    actions = db.session.scalars(sa.Select(Action)).all()
+    print(actions)
     print('[websocket_device]')
 
     # first thing get the car
@@ -263,7 +279,18 @@ def websocket_device(sock):
     while True:
         value = var_channel.get()
         print(f'message - {value}')
-        
+        for action in actions:
+            print(action)
+            if device == action.thing_code:
+                data = json.loads(value['msg'])
+                in_value = data['temp']
+                compare_value = action.value
+                comp_fn = operations[action.operation]
+                lat = data['lat']
+                lng = data['lng']
+                if comp_fn(in_value, compare_value):
+                    sock.send(json.dumps({'topic':'alert', 'msg':{'lat': lat, 'lng': lng}}))
+
         sock.send(value['msg'].decode())
         msg = sock.receive(0)
         
