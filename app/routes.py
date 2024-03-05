@@ -1,10 +1,11 @@
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for, jsonify
 from app import app, db, sock, mqtt_service
 from app.forms import LoginForm, RegistrationForm
 from app.models import User, Thing, History, Action
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 from urllib.parse import urlsplit
+
 
 import ast
 import json
@@ -22,11 +23,6 @@ def index():
     username = current_user.username
     email = current_user.email
 
-    histories = [{'location':'32.901467821069986, 13.229698875281889',}, 
-                 {'location':'32.901467821069986, 13.229698875281889',}, 
-                 {'location':'32.901467821069986, 13.229698875281889',}, 
-                 {'location':'32.901467821069986, 13.229698875281889',}, 
-                 {'location':'32.901467821069986, 13.229698875281889',}]
     return render_template("index.html", title='Home', devices_v=len(devices), devices=devices, username=username, email=email ,histories=histories_1)
 
 @app.route("/login", methods=['GET', 'POSt'])
@@ -86,16 +82,24 @@ def device(id):
     username = current_user.username
     email = current_user.email
 
-    device = db.session.get(Thing, id)
-    history_query = sa.select(History).order_by(History.timestamp.desc()).limit(20)
-    histories_1 = db.session.scalars(history_query).all()
 
-    histories = [{'location':'32.901467821069986, 13.229698875281889',}, 
-                 {'location':'32.901467821069986, 13.229698875281889',}, 
-                 {'location':'32.901467821069986, 13.229698875281889',}, 
-                 {'location':'32.901467821069986, 13.229698875281889',}, 
-                 {'location':'32.901467821069986, 13.229698875281889',}]
-    return render_template('device.html', device=device, histories=histories_1, username=username, email=email)
+    device = db.session.get(Thing, id)
+    history_query = sa.select(History).order_by(History.timestamp.desc()).limit(100)
+    histories_1 = db.session.scalars(history_query).all()
+    last_update_temp = histories_1[0].temperature
+    last_update_hum = histories_1[0].humidity
+    last_update_gas = histories_1[0].gas
+    last_update_lat = histories_1[0].lat
+    last_update_lng = histories_1[0].lng
+
+
+    return render_template('device.html', 
+                           temp = last_update_temp,
+                           hum = last_update_hum,
+                           gas = last_update_gas,
+                           lat = last_update_lat,
+                           lng = last_update_lng,
+                           device=device, histories=histories_1, username=username, email=email)
 
 @app.route('/add-device', methods=['GET', 'POST'])
 @login_required
@@ -186,6 +190,21 @@ def delete_action(id):
     flash(f'{action.name} has been deleted', 'success')
     return redirect(url_for('actions'))
 
+@app.route('/history/<id>', methods=['GET'])
+@login_required
+def history(id):
+    device = db.session.get(Thing, id)
+    history_query = sa.select(History).order_by(History.timestamp.desc()).where(History.thing_id == id).limit(100)
+    histories_1 = db.session.scalars(history_query).all()
+    data = {
+        "TIME": [log.timestamp for log in histories_1],
+        "temp": [log.temperature for log in histories_1],
+        "hum": [log.humidity for log in histories_1],
+        "gas": [log.gas for log in histories_1],
+    }
+    
+    return jsonify(data)
+
 
 # Websockets 
 
@@ -228,6 +247,7 @@ def websocket_devices(sock):
 
 @sock.route('/device')
 def websocket_device(sock):
+    global data
     print('[websocket_device]')
 
     # first thing get the car
@@ -235,19 +255,18 @@ def websocket_device(sock):
     device = ast.literal_eval(device)['device']
     print(f'{sock} - {device}')
 
-    var_channel = mqtt_service.subscribe_to(device + '/st', payload_parser=payload_parser)
-    # status_channel = mqtt_service.subscribe_to(device + '/st')
-
+    var_channel = mqtt_service.subscribe_to(device)
+    status_channel = mqtt_service.subscribe_to(device + '/status')
+    thing = db.session.query(Thing).where(Thing.code_name == device).all()
     print(var_channel)
-    # print(status_channel)
 
     while True:
         value = var_channel.get()
-        # status = status_channel.get(0)
-        save_to_histories(value)
+        print(f'message - {value}')
         
-        sock.send(json.dumps(value['msg']))
+        sock.send(value['msg'].decode())
         msg = sock.receive(0)
+        
         if msg == 'CLOSE':
             break
     

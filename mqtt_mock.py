@@ -22,6 +22,6 @@ client.loop_start()
 
 while True:
 
-    client.publish("/forest_1", json.dumps({'temp': 28.0, 'hum': 67, 'gas': 3000, 'lat': 32.7851238, 'lng': 12.5540404}))
+    client.publish("/forest_1", json.dumps({'temp': 30.0, 'hum': 67, 'gas': 3000, 'lat': 32.7851238, 'lng': 12.5540404}))
     print("publish to mqtt channel")
     time.sleep(2)

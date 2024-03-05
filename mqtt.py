@@ -40,8 +40,8 @@ class Channel:
             self._message = msg
         else:
             self._message = self._payload_parser(msg)
-
         self._new_message.set()
+
 
     def __repr__(self) -> str:
         return f'<Channel {self.topic}>'
@@ -63,8 +63,12 @@ class MQTT:
 
         # self._channels: List[Channel] = []
         self._channels: Dict[Channel] = {}
+        self._list_of_channels = []
+
         self._action_fn = None
         self._subscribers = []
+
+        self._on_message_fn = None
         
     def connect(self):
         print('[connect to mqtt broker]')
@@ -89,11 +93,11 @@ class MQTT:
         self.running.clear()
         self.client.loop_stop()
 
-    def on_connect(self, client: mqtt.Client, userdata, flags, rc):
-        # self.client.subscribe('/car_1')
-        
+    def on_connect(self, client: mqtt.Client, userdata, flags, rc):        
         for sub in self._subscribers:
             self.subscribe_to(sub)
+
+        
 
     def on_message(self, client: mqtt.Client, userdata, msg):
         msg_payload = {
@@ -101,9 +105,13 @@ class MQTT:
             'msg': msg.payload
         } 
         self._channels[msg.topic].notify(msg_payload)
-        # self._
+
+        # for action processing
         if self._action_fn:
             self._action_fn(msg_payload)
+
+        if self._on_message_fn:
+            self._on_message_fn(msg_payload)
 
     def subscribe_to(self, topic, payload_parser=None):
         topic_str = '/' + topic
@@ -114,9 +122,16 @@ class MQTT:
         else:
             self.client.subscribe(topic_str)
             channel = Channel(topic=topic_str, payload_parser=payload_parser)
-
             self._channels[topic_str] = channel
+            self._list_of_channels.append(channel)
             return channel
+
+    def get_channel(self, topic) -> Channel:
+        # topic_str = '/' + topic
+        # print(self._channels)
+        # return self._channels[topic_str]
+        print(len(self._list_of_channels))
+        pass
 
     def set_subscribers(self, things):
         self._subscribers = things
@@ -125,4 +140,6 @@ class MQTT:
         self._action_fn = fn
 
 
+    def set_on_message_cb(self, fn):
+        self._on_message_fn = fn
         

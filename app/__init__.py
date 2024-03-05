@@ -19,3 +19,5 @@ sock = Sock(app)
 mqtt_service = MQTT('broker.emqx.io', 1883)
 
 from app import routes, models
+
+

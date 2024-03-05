@@ -22,7 +22,7 @@
                         <div class="d-flex">
                             <div class="flex-grow-1">
                                 <p class="text-truncate font-size-14 mb-2">Status</p>
-                                <h4 id="car_status" class="mb-2"></h4>
+                                <h4 id="status" class="mb-2"></h4>
                             </div>
                             <div class="avatar-sm">
                                 <span class="avatar-title bg-light text-primary rounded-3">
@@ -40,7 +40,7 @@
                         <div class="d-flex">
                             <div class="flex-grow-1">
                                 <p class="text-truncate font-size-14 mb-2">Temperature</p>
-                                <h4 id="temperature_value" class="mb-2"></h4>
+                                <h4 id="temperature_value" class="mb-2">{{ temp }}</h4>
                             </div>
                             <div class="avatar-sm">
                                 <span class="avatar-title bg-light text-primary rounded-3">
@@ -57,7 +57,7 @@
                         <div class="d-flex">
                             <div class="flex-grow-1">
                                 <p class="text-truncate font-size-14 mb-2">Humidity</p>
-                                <h4 id="humidity_value" class="mb-2"></h4>
+                                <h4 id="humidity_value" class="mb-2">{{ hum }}</h4>
                             </div>
                             <div class="avatar-sm">
                                 <span class="avatar-title bg-light text-primary rounded-3">
@@ -74,7 +74,7 @@
                         <div class="d-flex">
                             <div class="flex-grow-1">
                                 <p class="text-truncate font-size-14 mb-2">Gas Sensor</p>
-                                <h4 id="speed_value" class="mb-2"></h4>
+                                <h4 id="gas_value" class="mb-2">{{ gas }}</h4>
                             </div>
                             <div class="avatar-sm">
                                 <span class="avatar-title bg-light text-primary rounded-3">
@@ -104,7 +104,7 @@
                 <div class="card-body">
                     <h4 class="card-title mb-4">Temp and Humidity Chart</h4>
 
-                    <div id="data_chart" class="apex-charts" dir="ltr"></div>
+                    <div id="history_chart" class="apex-charts" dir="ltr"></div>
                 </div>
             </div><!--end card-->
         </div>
@@ -114,7 +114,7 @@
                 <div class="card-body">
                     <h4 class="card-title mb-4">Gas Chart</h4>
 
-                    <div id="gyro_chart" class="apex-charts" dir="ltr"></div>
+                    <div id="gas_chart" class="apex-charts" dir="ltr"></div>
                 </div>
             </div><!--end card-->
         </div> <!-- end row -->
@@ -142,7 +142,7 @@
                                     <th>Device</th>
                                     <th>Name</th>
                                     <th>Location</th>
-                                    <th>Speed</th>
+                                    <th>Gas</th>
                                     <th>Temperature</th>
                                     <th>Humidity</th>
                                     <th>Date</th>
@@ -153,12 +153,12 @@
                                 {% for history in histories %}
                                 <tr>
                                     <td>
-                                        <h6 class="mb-0">car_1</h6>
+                                        <h6 class="mb-0">{{ device.code_name }}</h6>
                                     </td>
                                     <td>{{ device.name }}</td>
                                     <td>Latitude: {{ history.lat }}, Langtitude: {{ history.lng }}</td>
                                     <td>
-                                        {{ history.speed }}
+                                        {{ history.gas }}
                                     </td>
                                     <td>
                                         {{ history.temperature }}
@@ -227,31 +227,32 @@
         }
     };
 
-    var speed_t_h_chart = new ApexCharts(document.querySelector("#data_chart"), apex_options);
-    speed_t_h_chart.render();
+    var history_chart = new ApexCharts(document.querySelector("#history_chart"), apex_options);
+    history_chart.render();
 
-    var gyro_chart = new ApexCharts(document.querySelector("#gyro_chart"), apex_options);
-    gyro_chart.render();
+    var gas_chart = new ApexCharts(document.querySelector("#gas_chart"), apex_options);
+    gas_chart.render();
 
     var map = L.map('map').setView([32.782937, 12.56658], 8);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
-    var marker = L.marker([32.901467821069986, 13.229698875281889]).addTo(map);
-    marker.bindPopup("<b>Car 1</b><br>Status On")
+    // var marker = L.marker([32.901467821069986, 13.229698875281889]).addTo(map);
+    var marker = L.marker([]);
+    marker.bindPopup("<b>{{ device.code_name }}</b><br>Status On")
 
-    function update_widgets(status, temperature, humidity, speed) {
+    function update_widgets(status, temperature, humidity, gas) {
 
-        let status_el = document.getElementById('car_status');
+        let status_el = document.getElementById('status');
         let temperature_el = document.getElementById('temperature_value');
         let humidity_el = document.getElementById('humidity_value');
-        let speed_el = document.getElementById('speed_value');
+        let speed_el = document.getElementById('gas_value');
 
-        status_el.innerHTML = status
+        status_el.innerHTML = 'CONNECTED'
         temperature_el.innerHTML = temperature
         humidity_el.innerHTML = humidity
-        speed_el.innerHTML = speed
+        speed_el.innerHTML = gas
     }
 
     function update_map(marker, lat, lng) {
@@ -263,16 +264,17 @@
     socket.onopen = (event) => {
         console.log(event);
         socket.send(JSON.stringify({ device: '{{ device.code_name }}', }))
+        marker = marker.addTo(map);
     }
 
     var object = {}
     socket.onmessage = (event) => {
         console.log(event)
         object = JSON.parse(event.data)
-        // console.log(object)
+        console.log(object)
 
-        update_widgets(object.ST, object.T, object.H, object.S)
-        update_map(marker, object.LAT, object.LNG)
+        update_widgets('CONNECTED', object.temp, object.hum, object.gas)
+        update_map(marker, object.lat, object.lng)
     }
 
 
@@ -281,6 +283,34 @@
     });
 
 
+
+    zip = rows=>rows[0].map((_,c)=>rows.map(row=>row[c]))
+
+    function update_series(data){
+        output_1 = (zip([data.TIME, data.temp]))
+        output_2 = (zip([data.TIME, data.hum]))
+        output_3 = (zip([data.TIME, data.gas]))
+
+        history_chart.updateSeries([{
+            name: "Temperature",
+            data: output_1
+        }, {
+            name: "Humidity",
+            data: output_2
+        }], 1000)
+
+        gas_chart.updateSeries([ {
+            name: "Gas",
+            data: output_3
+        }], 1000)
+        
+    }
+    
+
+    fetch("/history/{{device.id}}")
+    .then(response => response.json())
+    .then(data => update_series(data))
+    .catch(error => console.error('Error: ', error));
 
 
 </script>
